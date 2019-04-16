@@ -2,44 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataManagement.Models;
+using DataManagement.Services;
 using Microsoft.AspNetCore.Mvc;
+using static DataManagement.Models.DataModel;
 
 namespace DataManagement.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("v1/")]
     [ApiController]
     public class DataController : ControllerBase
     {
-        // GET api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+
+        private readonly IDataService _service;
+
+        public DataController(IDataService service)
         {
-            return new string[] { "value1", "value2" };
+            _service = service;
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
+        // POST: api/Todo
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ActionResult<DataModel> AddData(DataModel model)
         {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var dataItems = _service.AddDataService(model);
+            return Ok();
         }
     }
 }
