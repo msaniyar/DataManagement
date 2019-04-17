@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using DataManagement.Models;
 using DataManagement.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +14,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ZNetCS.AspNetCore.Authentication.Basic;
+using ZNetCS.AspNetCore.Authentication.Basic.Events;
 
 namespace DataManagement
 {
@@ -35,6 +39,39 @@ namespace DataManagement
                 builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
 
             }));
+
+            services
+                .AddAuthentication(BasicAuthenticationDefaults.AuthenticationScheme)
+                .AddBasicAuthentication(
+                    options =>
+                    {
+                        options.Realm = "My Application";
+                        options.Events = new BasicAuthenticationEvents
+                        {
+                            OnValidatePrincipal = context =>
+                            {
+
+                                if ((context.UserName.ToLower() != Configuration.GetSection("UserName").Value) || (context.Password != Configuration.GetSection("Password").Value))
+                                    return Task.FromResult(AuthenticateResult.Fail("Authentication failed."));
+                                var claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Name,
+                                        context.UserName,
+                                        context.Options.ClaimsIssuer)
+                                };
+
+                                var ticket = new AuthenticationTicket(
+                                    new ClaimsPrincipal(new ClaimsIdentity(
+                                        claims,
+                                        BasicAuthenticationDefaults.AuthenticationScheme)),
+                                    new Microsoft.AspNetCore.Authentication.AuthenticationProperties(),
+                                    BasicAuthenticationDefaults.AuthenticationScheme);
+
+                                return Task.FromResult(AuthenticateResult.Success(ticket));
+
+                            }
+                        };
+                    });
 
         }
 

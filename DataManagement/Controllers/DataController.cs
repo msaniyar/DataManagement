@@ -10,40 +10,36 @@ namespace DataManagement.Controllers
     [ApiController]
     public class DataController : Controller
     {
-        private readonly IDataControl _datacontrol;
+        private readonly IDataControl _dataControl;
 
         public DataController(IDataControl dataControl)
         {
-            _datacontrol = dataControl;
+            _dataControl = dataControl;
         }
 
         [HttpPost]
-        [Route("AddPost")]
+        [Route("Add")]
         public async Task<IActionResult> AddPost([FromBody]DataTableView model)
         {
-            if (ModelState.IsValid)
+
+            if (!ModelState.IsValid) return BadRequest();
+            try
             {
-                try
+                var postId = await _dataControl.AddPostAsync(new DataTable{UserName = model.UserName, Password = model.Password, Tree = model.Tree.ToString()});
+                if (postId > 0)
                 {
-                    var postId = await _datacontrol.AddPostAsync(new DataTable{UserName = model.UserName, Password = model.Password, Tree = model.Tree.ToString()});
-                    if (postId > 0)
-                    {
-                        return Ok(postId);
-                    }
-                    else
-                    {
-                        return NotFound();
-                    }
+                    return Ok(postId);
                 }
-                catch (Exception)
+                else
                 {
-
-                    return BadRequest();
+                    return NotFound();
                 }
-
             }
+            catch (Exception)
+            {
 
-            return BadRequest();
+                return BadRequest();
+            }
         }
 
 

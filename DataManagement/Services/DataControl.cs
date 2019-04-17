@@ -5,7 +5,7 @@ namespace DataManagement.Services
 {
     public class DataControl : IDataControl
     {
-        DataManagementContext _db;
+        private readonly DataManagementContext _db;
 
         public DataControl(DataManagementContext db)
         {
@@ -13,15 +13,17 @@ namespace DataManagement.Services
         }
         public async Task<int> AddPostAsync(DataTable post)
         {
-            if (_db != null)
-            {
-                await _db.DataTable.AddAsync(post);
-                await _db.SaveChangesAsync();
+            if (_db == null) return 0;
 
-                return post.GetHashCode();
-            }
 
-            return 0;
+            await _db.DataTable.AddAsync(post);
+            await _db.SaveChangesAsync();
+
+            return post.GetHashCode();
+
         }
+
+
+
     }
 }
