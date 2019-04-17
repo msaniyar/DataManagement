@@ -1,32 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using DataManagement.Models;
 using DataManagement.Services;
 using Microsoft.AspNetCore.Mvc;
-using static DataManagement.Models.DataModel;
 
 namespace DataManagement.Controllers
 {
-    [Route("v1/")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class DataController : ControllerBase
+    public class DataController : Controller
     {
+        private readonly IDataControl _datacontrol;
 
-        private readonly IDataService _service;
-
-        public DataController(IDataService service)
+        public DataController(IDataControl dataControl)
         {
-            _service = service;
+            _datacontrol = dataControl;
         }
 
-        // POST: api/Todo
         [HttpPost]
-        public ActionResult<DataModel> AddData(DataModel model)
+        [Route("AddPost")]
+        public async Task<IActionResult> AddPost([FromBody]DataTable model)
         {
-            var dataItems = _service.AddDataService(model);
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var postId = await _datacontrol.AddPostAsync(model);
+                    if (postId > 0)
+                    {
+                        return Ok(postId);
+                    }
+                    else
+                    {
+                        return NotFound();
+                    }
+                }
+                catch (Exception)
+                {
+
+                    return BadRequest();
+                }
+
+            }
+
+            return BadRequest();
         }
+
+
     }
 }
