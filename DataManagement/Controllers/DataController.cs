@@ -19,13 +19,13 @@ namespace DataManagement.Controllers
 
         [HttpPost]
         [Route("AddPost")]
-        public async Task<IActionResult> AddPost([FromBody]DataTable model)
+        public async Task<IActionResult> AddPost([FromBody]DataTableView model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var postId = await _datacontrol.AddPostAsync(model);
+                    var postId = await _datacontrol.AddPostAsync(new DataTable{UserName = model.UserName, Password = model.Password, Tree = model.Tree.ToString()});
                     if (postId > 0)
                     {
                         return Ok(postId);
