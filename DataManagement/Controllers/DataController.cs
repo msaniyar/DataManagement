@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DataManagement.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class DataController : Controller
     {
@@ -19,13 +19,13 @@ namespace DataManagement.Controllers
 
         [HttpPost]
         [Route("Add")]
-        public async Task<IActionResult> AddPost([FromBody]DataTableView model)
+        public async Task<IActionResult> AddPost([FromBody]TreeListTable model)
         {
 
             if (!ModelState.IsValid) return BadRequest();
             try
             {
-                var postId = await _dataControl.AddPostAsync(new DataTable{UserName = model.UserName, Password = model.Password, Tree = model.Tree.ToString()});
+                var postId = await _dataControl.AddPostAsync(model);
                 if (postId > 0)
                 {
                     return Ok(postId);

@@ -5,6 +5,6 @@ namespace DataManagement.Services
 {
     public interface IDataControl
     {
-        Task<int> AddPostAsync(DataTable post);
+        Task<int> AddPostAsync(TreeListTable post);
     }
 }
