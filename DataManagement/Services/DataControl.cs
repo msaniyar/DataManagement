@@ -21,7 +21,9 @@ namespace DataManagement.Services
         {
             if (_db == null) return 0;
             var secret = Startup.StaticConfig.GetSection("AppConfiguration")["SecretKey"];
-            post.Tree = Decrypt(post.Tree, secret);
+            var vector = Startup.StaticConfig.GetSection("AppConfiguration")["vector"];
+
+            post.Tree = DecryptAesManaged(post.Tree, secret, vector);
             await _db.TreeListTable.AddAsync(post);
             await _db.SaveChangesAsync();
 
@@ -29,56 +31,46 @@ namespace DataManagement.Services
 
         }
 
-
-        public static string Decrypt(string value, string password)
+        public static string DecryptAesManaged(string encryptedText, string key, string vector )
         {
-            return Decrypt<AesManaged>(value, password);
-        }
-        public static string Decrypt<T>(string value, string password) where T : SymmetricAlgorithm, new()
-        {
-
-            var vectorBytes = Encoding.UTF8.GetBytes(Startup.StaticConfig.GetSection("AppConfiguration")["vector"]);
-            var saltBytes = Encoding.UTF8.GetBytes(Startup.StaticConfig.GetSection("AppConfiguration")["salt"]);
-            var valueBytes = Encoding.UTF8.GetBytes(value); 
-            var iterations = Startup.StaticConfig.GetSection("AppConfiguration")["iteration"];
-            var keySize = Startup.StaticConfig.GetSection("AppConfiguration")["keysize"];
-
-
-            byte[] decrypted;
-            var passwordBytes =
-                new Rfc2898DeriveBytes(password, saltBytes, int.Parse(iterations));
-            int decryptedByteCount = 0;
-
-
-            using (T cipher = new T())
+            try
             {
-                var keyBytes = passwordBytes.GetBytes(int.Parse(keySize) / 8);
-
-                cipher.Mode = CipherMode.CBC;
-                cipher.Padding = PaddingMode.PKCS7;
-
-                try
+                // Create Aes that generates a new key and initialization vector (IV).    
+                // Same key must be used in encryption and decryption    
+                using (AesManaged aes = new AesManaged())
                 {
-                    using (ICryptoTransform decryptor = cipher.CreateDecryptor(keyBytes, vectorBytes))
+                    aes.Mode = CipherMode.ECB;
+                    // Decrypt the bytes to a string.    
+                    return Decrypt(Convert.FromBase64String(encryptedText), Convert.FromBase64String(key), Convert.FromBase64String(vector));
+                }
+            }
+            catch (Exception)
+            {
+                return  String.Empty;
+            }
+        }
+
+        private static string Decrypt(byte[] cipherText, byte[] Key, byte[] IV)
+        {
+            string plaintext = null;
+            // Create AesManaged    
+            using (AesManaged aes = new AesManaged())
+            {
+                // Create a decryptor    
+                ICryptoTransform decryptor = aes.CreateDecryptor(Key, IV);
+                // Create the streams used for decryption.    
+                using (MemoryStream ms = new MemoryStream(cipherText))
+                {
+                    // Create crypto stream    
+                    using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
                     {
-                        using (MemoryStream from = new MemoryStream(valueBytes))
-                        {
-                            using (CryptoStream reader = new CryptoStream(from, decryptor, CryptoStreamMode.Read))
-                            {
-                                decrypted = new byte[valueBytes.Length];
-                                decryptedByteCount = reader.Read(decrypted, 0, decrypted.Length);
-                            }
-                        }
+                        // Read crypto stream    
+                        using (StreamReader reader = new StreamReader(cs))
+                            plaintext = reader.ReadToEnd();
                     }
                 }
-                catch (Exception)
-                {
-                    return String.Empty;
-                }
-
-                cipher.Clear();
             }
-            return Encoding.UTF8.GetString(decrypted, 0, decryptedByteCount);
+            return plaintext;
         }
 
 
