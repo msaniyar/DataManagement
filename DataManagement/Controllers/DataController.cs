@@ -31,7 +31,7 @@ namespace DataManagement.Controllers
             try
             {
                 var postId = await _dataControl.AddPostAsync(model);
-                if (postId > 0)
+                if (postId != Guid.Empty)
                 {
                     return Ok(postId);
                 }

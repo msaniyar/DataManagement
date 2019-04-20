@@ -22,9 +22,9 @@ namespace DataManagement.Services
         /// </summary>
         /// <param name="post"></param>
         /// <returns></returns>
-        public async Task<int> AddPostAsync(TreeListTable post)
+        public async Task<Guid> AddPostAsync(TreeListTable post)
         {
-            if (_db == null) return 0;
+            if (_db == null) return Guid.Empty;
             var secret = Startup.StaticConfig.GetSection("AppConfiguration")["SecretKey"];
             var vector = Startup.StaticConfig.GetSection("AppConfiguration")["vector"];
 
@@ -32,7 +32,7 @@ namespace DataManagement.Services
             await _db.TreeListTable.AddAsync(post);
             await _db.SaveChangesAsync();
 
-            return post.GetHashCode();
+            return post.Id;
 
         }
 

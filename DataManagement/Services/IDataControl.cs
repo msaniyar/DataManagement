@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using DataManagement.Models;
 
 namespace DataManagement.Services
@@ -8,6 +9,6 @@ namespace DataManagement.Services
     /// </summary>
     public interface IDataControl
     {
-        Task<int> AddPostAsync(TreeListTable post);
+        Task<Guid> AddPostAsync(TreeListTable post);
     }
 }
