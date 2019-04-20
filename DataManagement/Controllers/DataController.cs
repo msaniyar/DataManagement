@@ -17,6 +17,11 @@ namespace DataManagement.Controllers
             _dataControl = dataControl;
         }
 
+        /// <summary>
+        /// HTTP post method for incoming requests.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> AddPost([FromBody]TreeListTable model)

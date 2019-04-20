@@ -17,6 +17,11 @@ namespace DataManagement.Services
             _db = db;
         }
 
+        /// <summary>
+        /// Adding information to the database with decryption.
+        /// </summary>
+        /// <param name="post"></param>
+        /// <returns></returns>
         public async Task<int> AddPostAsync(TreeListTable post)
         {
             if (_db == null) return 0;
@@ -31,13 +36,20 @@ namespace DataManagement.Services
 
         }
 
+        /// <summary>
+        /// Calling decryption method.
+        /// </summary>
+        /// <param name="encryptedText"></param>
+        /// <param name="key"></param>
+        /// <param name="vector"></param>
+        /// <returns></returns>
         public static string DecryptAesManaged(string encryptedText, string key, string vector )
         {
             try
             {
                 // Create Aes that generates a new key and initialization vector (IV).    
                 // Same key must be used in encryption and decryption    
-                using (AesManaged aes = new AesManaged())
+                using (var aes = new AesManaged())
                 {
                     aes.Mode = CipherMode.ECB;
                     // Decrypt the bytes to a string.    
@@ -46,26 +58,33 @@ namespace DataManagement.Services
             }
             catch (Exception)
             {
-                return  String.Empty;
+                return  string.Empty;
             }
         }
 
+        /// <summary>
+        /// Decrypt incoming text with using AES method.
+        /// </summary>
+        /// <param name="cipherText"></param>
+        /// <param name="Key"></param>
+        /// <param name="IV"></param>
+        /// <returns></returns>
         private static string Decrypt(byte[] cipherText, byte[] Key, byte[] IV)
         {
             string plaintext = null;
             // Create AesManaged    
-            using (AesManaged aes = new AesManaged())
+            using (var aes = new AesManaged())
             {
                 // Create a decryptor    
-                ICryptoTransform decryptor = aes.CreateDecryptor(Key, IV);
+                var decryptor = aes.CreateDecryptor(Key, IV);
                 // Create the streams used for decryption.    
-                using (MemoryStream ms = new MemoryStream(cipherText))
+                using (var ms = new MemoryStream(cipherText))
                 {
                     // Create crypto stream    
-                    using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+                    using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
                     {
                         // Read crypto stream    
-                        using (StreamReader reader = new StreamReader(cs))
+                        using (var reader = new StreamReader(cs))
                             plaintext = reader.ReadToEnd();
                     }
                 }
