@@ -24,16 +24,22 @@ namespace DataManagement.Services
         /// <returns></returns>
         public async Task<Guid> AddPostAsync(TreeListTable post)
         {
-            if (_db == null) return Guid.Empty;
-            var secret = Startup.StaticConfig.GetSection("AppConfiguration")["SecretKey"];
-            var vector = Startup.StaticConfig.GetSection("AppConfiguration")["vector"];
+            try
+            {
+                if (_db == null) return Guid.Empty;
+                var secret = Startup.StaticConfig.GetSection("AppConfiguration")["SecretKey"];
+                var vector = Startup.StaticConfig.GetSection("AppConfiguration")["vector"];
 
-            post.Tree = DecryptAesManaged(post.Tree, secret, vector);
-            await _db.TreeListTable.AddAsync(post);
-            await _db.SaveChangesAsync();
+                post.Tree = DecryptAesManaged(post.Tree, secret, vector);
+                await _db.TreeListTable.AddAsync(post);
+                await _db.SaveChangesAsync();
 
-            return post.Id;
-
+                return post.Id;
+            }
+            catch (Exception)
+            {
+                return Guid.Empty;
+            }
         }
 
         /// <summary>
