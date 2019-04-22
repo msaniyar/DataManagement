@@ -10,5 +10,6 @@ namespace DataManagement.Services
     public interface IDataControl
     {
         Task<Guid> AddPostAsync(TreeListTable post);
+        string DecryptAesManaged(string encryptedText, string key, string vector);
     }
 }

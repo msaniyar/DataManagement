@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataManagement", "DataManagement\DataManagement.csproj", "{C96A8060-3AEB-4462-9D98-A9E5676B942C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataManagement", "DataManagement\DataManagement.csproj", "{C96A8060-3AEB-4462-9D98-A9E5676B942C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestDataManagement", "UnitTestDataManagement\UnitTestDataManagement.csproj", "{5050857F-C2E3-4DFA-BA5A-15F5D95BE986}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{C96A8060-3AEB-4462-9D98-A9E5676B942C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C96A8060-3AEB-4462-9D98-A9E5676B942C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C96A8060-3AEB-4462-9D98-A9E5676B942C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5050857F-C2E3-4DFA-BA5A-15F5D95BE986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5050857F-C2E3-4DFA-BA5A-15F5D95BE986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5050857F-C2E3-4DFA-BA5A-15F5D95BE986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5050857F-C2E3-4DFA-BA5A-15F5D95BE986}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

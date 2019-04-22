@@ -49,7 +49,7 @@ namespace DataManagement.Services
         /// <param name="key"></param>
         /// <param name="vector"></param>
         /// <returns></returns>
-        public static string DecryptAesManaged(string encryptedText, string key, string vector )
+        public string DecryptAesManaged(string encryptedText, string key, string vector )
         {
             try
             {
